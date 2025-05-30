@@ -1,6 +1,6 @@
 # Vision Agent MCP (v0.1)
 
-This package provides the Vision Agent for use with the MCP framework, exposing powerful computer vision and document analysis tools through the Model Context Protocol.
+An MCP package for Vision Agent that brings powerful computer vision and document analysis tools to the Model Context Protocol.
 
 ## Available Tools
 
