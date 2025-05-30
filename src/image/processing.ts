@@ -24,23 +24,19 @@ export function isValidBase64(str: string): boolean {
     }
 }
 
-export function saveBase64Image(jsonString: string, filePath: string): boolean {
+export function saveBase64Image(base64Data: string, filePath: string) {
     try {
-        const parsedObject = JSON.parse(jsonString);
-        const base64Data: string = parsedObject.data[0];
-        
         if (base64Data === undefined || !isValidBase64(base64Data)) {
-            return false;
+            throw new Error('Invalid base64 string')
         }
         
         const imageBuffer = Buffer.from(base64Data, 'base64');
+
         if (!filePath.includes('/dev/null')) {
             fs.writeFileSync(filePath, imageBuffer);
         }
-        return true;
     } catch (error: unknown) {
         console.error("Error saving base64 image:", error);
-        return false;
     }
 }
 

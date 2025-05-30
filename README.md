@@ -70,7 +70,7 @@ After building, configure your MCP client with the following settings:
       ],
       "env": {
         "VISION_AGENT_API_KEY": "YOUR_API_KEY_HERE",
-        "OUTPUT_DIRECTORY": "../output",
+        "OUTPUT_DIRECTORY": "../../output",
         "IMAGE_DISPLAY_ENABLED": "true"
       }
     }

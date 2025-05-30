@@ -14,6 +14,7 @@ import { formatApiError } from '../utils/http.js';
 import { saveBase64Image } from '../image/processing.js';
 import { createVisualization } from './visualization.js';
 import { SERVER_CONFIG, getEnvironmentConfig } from './config.js';
+import fs from 'fs';
 
 export async function handleListTools() {
     const toolsForClient: Tool[] = Array.from(toolDefinitionMap.values()).map(def => ({
@@ -142,20 +143,28 @@ function buildFormData(requestBodyData: unknown): FormData {
 
 async function processResponse(response: any, definition: McpToolDefinition, toolArgs: JsonObject, config: any) {
     let responseText = formatResponseData(response);
-    const outputPath = path.join(config.outputDirectory || '/dev/null', 'output.png');
-    const isImage = saveBase64Image(responseText, outputPath);
     
     const responseContent = [];
     const imageResponseNames = ['text-to-object-detection', 'text-to-instance-segmentation', 'activity-recognition', 'depth-pro'];
     
-    if (isImage || imageResponseNames.includes(definition.name)) {
+    if (imageResponseNames.includes(definition.name)) {
         responseContent.push({
             type: "text",
             text: `API Image Response (Status: ${response.status}):\nImage successfully generated and saved to ${config.outputDirectory}/output.jpg`
         });
-        
+        const visualization = await createVisualization(definition, response, toolArgs);
+
+        if (config.outputDirectory) {
+            if (visualization) {
+                visualization.forEach((item, i) => {
+                    if (item.type === "image") {
+                        const outputPath = path.join(config.outputDirectory, `output_${definition.name}_${Date.now()}.jpg`);
+                        saveBase64Image(item.data, outputPath);
+                    }
+                });
+            }
+        }
         if (config.imageDisplayEnabled) {
-            const visualization = await createVisualization(definition, response, toolArgs);
             if (visualization) {
                 responseContent.push(...visualization);
             }
