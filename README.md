@@ -2,6 +2,8 @@
 
 An MCP package for Vision Agent that brings powerful computer vision and document analysis tools to the Model Context Protocol.
 
+![An MCP package for Vision Agent that brings powerful computer vision and document analysis tools to the Model Context Protocol.](assets/video.mov)
+
 ## Available Tools
 
 This MCP server provides access to the following Vision Agent API tools:

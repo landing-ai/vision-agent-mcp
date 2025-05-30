@@ -1,4 +1,5 @@
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import axios from 'axios';
 import sharp from 'sharp';
@@ -84,7 +85,6 @@ export function loadFileFromBase64(
         contentType
     };
 }
-
 export async function processFileArgs(toolArgs: JsonObject): Promise<JsonObject> {
     const fileTypeMap = {
         'images': 'image',
@@ -104,6 +104,12 @@ export async function processFileArgs(toolArgs: JsonObject): Promise<JsonObject>
                 if (url.startsWith('@')) {
                     url = url.slice(1);
                 }
+                
+                // Handle remote URLs
+                if (url.startsWith('http://') || url.startsWith('https://')) {
+                    url = await downloadToTemp(url, fileType);
+                }
+                
                 const normalizedPath = path.normalize(url);
                 if (!path.isAbsolute(normalizedPath)) {
                     throw new Error(`Please provide a global (absolute) file path instead of a local one for ${fileType}.`);
@@ -121,6 +127,12 @@ export async function processFileArgs(toolArgs: JsonObject): Promise<JsonObject>
                     if (url.startsWith('@')) {
                         url = url.slice(1);
                     }
+                    
+                    // Handle remote URLs
+                    if (url.startsWith('http://') || url.startsWith('https://')) {
+                        url = await downloadToTemp(url, fileType);
+                    }
+                    
                     const normalizedPath = path.normalize(url);
                     if (!path.isAbsolute(normalizedPath)) {
                         throw new Error(`Please provide a global (absolute) file path instead of a local one for ${fileType}[${i}].`);
@@ -136,4 +148,16 @@ export async function processFileArgs(toolArgs: JsonObject): Promise<JsonObject>
     }
     
     return toolArgs;
+}
+
+async function downloadToTemp(url: string, fileType: string): Promise<string> {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Failed to download ${url}: ${response.statusText}`);
+    
+    const buffer = await response.arrayBuffer();
+    const ext = fileType === 'pdf' ? '.pdf' : fileType === 'image' ? '.jpg' : '.mp4';
+    const tempPath = path.join(os.tmpdir(), `temp_${Date.now()}${ext}`);
+    
+    await fs.promises.writeFile(tempPath, Buffer.from(buffer));
+    return tempPath;
 }

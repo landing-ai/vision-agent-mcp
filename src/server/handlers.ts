@@ -14,7 +14,6 @@ import { formatApiError } from '../utils/http.js';
 import { saveBase64Image } from '../image/processing.js';
 import { createVisualization } from './visualization.js';
 import { SERVER_CONFIG, getEnvironmentConfig } from './config.js';
-import fs from 'fs';
 
 export async function handleListTools() {
     const toolsForClient: Tool[] = Array.from(toolDefinitionMap.values()).map(def => ({
@@ -148,10 +147,6 @@ async function processResponse(response: any, definition: McpToolDefinition, too
     const imageResponseNames = ['text-to-object-detection', 'text-to-instance-segmentation', 'activity-recognition', 'depth-pro'];
     
     if (imageResponseNames.includes(definition.name)) {
-        responseContent.push({
-            type: "text",
-            text: `API Image Response (Status: ${response.status}):\nImage successfully generated and saved to ${config.outputDirectory}/output.jpg`
-        });
         const visualization = await createVisualization(definition, response, toolArgs);
 
         if (config.outputDirectory) {
@@ -160,6 +155,10 @@ async function processResponse(response: any, definition: McpToolDefinition, too
                     if (item.type === "image") {
                         const outputPath = path.join(config.outputDirectory, `output_${definition.name}_${Date.now()}.jpg`);
                         saveBase64Image(item.data, outputPath);
+                        responseContent.push({
+                            type: "text",
+                            text: `API Image Response (Status: ${response.status}):\nImage successfully generated and saved to ${outputPath}`
+                        });
                     }
                 });
             }
