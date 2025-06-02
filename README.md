@@ -5,9 +5,12 @@ An MCP package for Vision Agent that brings powerful computer vision and documen
 ![Demo of Vision Agent with Claude Code](assets/demo.gif)
 
 
-## Available Tools
+## What can you do with the Vision Agent MCP server?
 
 This MCP server provides access to the following Vision Agent API tools:
+
+### **agentic-document-analysis**
+Extract and analyze structured information from documents using AI agents. Performs intelligent document processing to extract text, metadata, and structured data from images and PDFs. See [here](https://va.landing.ai/demo/doc-extraction) for the web version.
 
 ### **text-to-object-detection**
 Detect objects in images or videos based on text prompts using advanced computer vision models (OWLv2, CountGD, Florence2). Identifies and locates objects described in natural language with bounding boxes and confidence scores.
@@ -20,9 +23,6 @@ Analyze video content to identify and describe human activities and behaviors. P
 
 ### **depth-pro**
 Generate high-quality depth information from single images. Uses advanced depth estimation models to create depth maps showing relative distances of objects from the camera viewpoint.
-
-### **agentic-document-analysis**
-Extract and analyze structured information from documents using AI agents. Performs intelligent document processing to extract text, metadata, and structured data from images and PDFs. See [here](https://va.landing.ai/demo/doc-extraction) for the web version.
 
 ## Installation & Build
 
