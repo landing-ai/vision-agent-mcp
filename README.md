@@ -95,7 +95,7 @@ If your client supports inline resources, you’ll see bounding-box overlays; ot
 | ENV var                 | Required | Default    | Purpose                                                |
 | ----------------------- | -------- | ---------- | ------------------------------------------------------ |
 | `VISION_AGENT_API_KEY`  | **Yes**  | —          | Landing AI auth token.                                 |
-| `OUTPUT_DIRECTORY`      | No       | -          | Where rendered images / masks / depth maps are stored. |
+| `OUTPUT_DIRECTORY`      | No       | —          | Where rendered images / masks / depth maps are stored. |
 | `IMAGE_DISPLAY_ENABLED` | No       | `true`     | `false` ➜ skip rendering                               |
 
 ### Sample MCP client entry (`.mcp.json` for VS Code / Cursor)
