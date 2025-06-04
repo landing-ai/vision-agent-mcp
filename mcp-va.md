@@ -1,5 +1,4 @@
-Below is a full-length, ready-to-paste **`README.md`** for your Vision Agent MCP repository.
-Everything that’s currently known from your draft is included; anything still unknown (e.g., exact npm package name, CI badge URL, license type) is clearly marked with **TODO** comments so you can fill them in later—no silent assumptions were made.
+Everything that’s currently known is included; anything still unknown (e.g., exact npm package name, CI badge URL, license type) is clearly marked with **TODO** comments so we can fill them in later—no silent assumptions were made.
 
 ---
 
