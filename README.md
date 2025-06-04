@@ -18,7 +18,8 @@ Modern LLM “agents” call external tools through the **Model Context Protocol
 
 ## 📸 Demo
 
-<https://github.com/user-attachments/assets/4c78ebbb-85ac-4f39-865c-e4de27a57e6b>
+<https://github.com/user-attachments/assets/0a44ee20-47f3-4ba0-9683-440ba1675577>
+
 
 ## 🧰 Supported Use Cases (v0.1)
 
