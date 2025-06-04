@@ -71,14 +71,14 @@ export VISION_AGENT_API_KEY="<YOUR_API_KEY>"
 ```
 
 1. Open your MCP-aware client.
-2. Upload *street.jpg* (or any test image).
+2. Download *street.png* (from the assets folder in this directory, or you can choose any test image).
 3. Paste the prompt below (or any prompt):
 
 ```
-Detect all traffic lights in street.jpg using text-to-object-detection
+Detect all traffic lights in /Users/cmaloney111/Documents/Landing/mcp/vision-agent-mcp/assets/street.png using text-to-object-detection
 ```
 
-If your client supports inline resources you’ll see bounding-box overlays; otherwise, the PNG is saved to your output directory, and the chat shows its path.
+If your client supports inline resources, you’ll see bounding-box overlays; otherwise, the PNG is saved to your output directory, and the chat shows its path.
 
 
 ### Prerequisites
