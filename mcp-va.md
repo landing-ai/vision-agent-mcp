@@ -1,103 +1,117 @@
-# Vision Agent MCP 
+# Vision Agent MCP Server
 
-<!-- Badges (fill in real links) -->
+<!-- ───────────────────────────── Badges ───────────────────────────── -->
+<!-- Replace all TODOs with real links once available -->
 
 [![npm](https://img.shields.io/npm/v/<!-- TODO:pkg-name -->?label=npm)](https://www.npmjs.com/package/<!-- TODO:pkg-name -->)
-[![build](https://img.shields.io/github/actions/workflow/status/landing-ai/vision-agent-mcp/ci.yml)](<!-- TODO:actions-link -->)
+[![build](https://img.shields.io/github/actions/workflow/status/landing-ai/vision-agent-mcp/ci.yml?branch=main)](<!-- TODO:actions-link -->)
 [![license](https://img.shields.io/github/license/landing-ai/vision-agent-mcp)](LICENSE)
 
 > **Beta – v0.1**  
-> This server is an **early preview**. Expect breaking changes until we hit v1.0.
+> This project is **early access** and subject to breaking changes until v1.0.
 
 ---
 
-## Overview
+## ✨ Why this project exists
 
-The **Vision Agent MCP** implements the [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) so that large-language-model “agents” can call LandingAI’s Vision Agent APIs from any MCP-compatible client (Claude Desktop, Cursor, Cline, …). An MCP package for Vision Agent that brings powerful computer vision and document analysis tools to the Model Context Protocol.
+Modern LLM “agents” can call external tools through the **Model Context Protocol (MCP)**.
+**Vision Agent MCP** runs locally as an MCP server and forwards those tool calls to Landing AI’s Vision Agent REST endpoints, so any MCP-compatible client—Claude Desktop, Cursor, Cline, and others—can tap the platform’s computer-vision and document-analysis APIs without writing custom REST code or loading an extra SDK.
 
+*Plug it into your editor and start issuing natural-language CV commands in seconds.*
 
-![Demo of Vision Agent with Claude Code](assets/demo.gif)
+---
 
-### Vision Agent MCP (v0.1) - Supported Capabilities 
+## 📸 Demo
 
-| Use Case | Description |
-|------|--------------|
-| `agentic-document-analysis` | Extracts text, images, charts, diagrams from PDFs and images taking into consideration layout and other visual cues. |
-| `text-to-object-detection` | Detects objects described in free-text prompts (OWLv2 / CountGD / Florence 2). |
-| `text-to-instance-segmentation` | Produces pixel-accurate masks via Florence 2 + SAM 2. |
-| `activity-recognition` | Labels activities in video with start and end timestamps (support detecting multiple acitivities at once). |
-| `depth-pro` | Generates high-resolution monocular depth maps. |
+![Demo of Vision Agent + Claude Code](assets/demo.gif) <!-- TODO: provide a real GIF or remove -->
 
-*(Run `npm run generate-tools` to pull the latest tool list from the Vision Agent OpenAPI spec.)*
+---
+
+## 🧰 Supported Vision Agent tools (v0.1)
+
+| Capability                    | Description                                                                                                       |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **`agentic-document-analysis`** | Parse PDFs / images to extract text, tables, charts, and diagrams taking into account layouts and other visual cues.                                 |
+| **`text-to-object-detection`** | Detect free-form prompts (“all traffic lights”) using OWLv2 / CountGD / Florence-2; outputs bounding boxes.        |
+| **`text-to-instance-segmentation`** | Pixel-perfect masks via Florence-2 + Segment-Anything-v2 (SAM-2).                                              |
+| **`activity-recognition`**     | Recognise multiple activities at one-pass in video with start/end timestamps.                                           |
+| **`depth-pro`**                | High-resolution monocular depth estimation for single images.                                                    |
+
+> Run **`npm run generate-tools`** whenever Vision Agent releases new endpoints—the script fetches the latest OpenAPI spec and regenerates the local tool map automatically.
 
 ---
 
 ## 🗺 Table of Contents
 1. [Quick Start](#-quick-start)
-2. [Installation](#-installation)
+2. [Installation Options](#-installation-options)
 3. [Configuration](#-configuration)
 4. [Example Prompts](#-example-prompts)
-5. [How It Works](#-how-it-works)
+5. [Architecture & Flow](#-architecture--flow)
 6. [Developer Guide](#-developer-guide)
 7. [Troubleshooting](#-troubleshooting)
 8. [Contributing](#-contributing)
 9. [Roadmap](#-roadmap)
-10. [License](#-license)
+10. [Security & Privacy](#-security--privacy)
+11. [License](#-license)
 
 ---
 
 ## 🚀 Quick Start
 
 ```bash
-# 1 Clone & install
+# 1  Clone & install
 git clone https://github.com/landing-ai/vision-agent-mcp.git
 cd vision-agent-mcp
 npm install
 
-# 2 Build
-npm run build          # compiles TypeScript to ./build
+# 2  Build TypeScript → ./build
+npm run build
 
-# 3 Set env vars (at least your Vision Agent key)
-export VISION_AGENT_API_KEY=<YOUR_KEY>
+# 3  Set your Vision Agent API key
+export VISION_AGENT_API_KEY="<YOUR_API_KEY>"
 
-# 4 Launch the server
-npm start              # or: node build/index.js
+# 4  Launch the MCP server on stdio
+npm start            # or: node build/index.js
 ````
 
-Open your MCP-capable client, switch to “Vision Agent MCP”, and try:
+1. Open your MCP-aware client, choose **Vision Agent MCP**.
+2. Upload *street.jpg* (or any test image).
+3. Paste the prompt below:
 
 ```
 Detect all traffic lights in street.jpg using text-to-object-detection
 ```
 
-If your client supports resource previews, you’ll see bounding boxes in-line.
+If your client supports inline resources you’ll see bounding-box overlays; otherwise, the PNG is saved to `./output` and the chat shows its path.
 
 ---
 
-## 📦 Installation
+## 📦 Installation Options
 
 <details>
-<summary><strong>Option A – use the repo (recommended for now)</strong></summary>
+<summary><strong>A&nbsp;·&nbsp;Git clone ⬇️ (recommended)</strong></summary>
 
-Same as “Quick Start” above: clone → `npm install` → `npm run build` → `npm start`.
+Exactly what the Quick Start shows: clone → `npm install` → `npm run build` → `npm start`.
 
 </details>
 
 <details>
-<summary><strong>Option B – Docker (experimental)</strong></summary>
+<summary><strong>B&nbsp;·&nbsp;Docker 🐳 (experimental)</strong></summary>
 
 ```bash
 docker build -t vision-agent-mcp .
 docker run -it --rm \
-  -e VISION_AGENT_API_KEY=<YOUR_KEY> \
-  -p 3910:3910 \
+  -e VISION_AGENT_API_KEY="<YOUR_API_KEY>" \
+  -p 3910:3910 \          # Only needed if you enable HTTP transport later
   vision-agent-mcp
 ```
+
+Mongoising on stdio inside Docker can be awkward; keep this for headless deployments or testing.
 
 </details>
 
 <details>
-<summary><strong>Option C – NPX one-liner (coming once published to npm)</strong></summary>
+<summary><strong>C&nbsp;·&nbsp;NPX One-liner ➡️ (coming once published)</strong></summary>
 
 ```bash
 npx <!-- TODO:pkg-name -->@latest
@@ -105,27 +119,27 @@ npx <!-- TODO:pkg-name -->@latest
 
 </details>
 
-### Requirements
+### Prerequisites
 
-| What                           | Version                          |
-| ------------------------------ | -------------------------------- |
-| Node.js                        | **≥ 20.0.0**                     |
-| Vision Agent account & API key | required                         |
-| MCP-compatible client          | Claude Desktop, Cursor, Cline, … |
+| Software                 | Minimum Version                          |
+| ------------------------ | ---------------------------------------- |
+| **Node.js**              | 20 (LTS)                                 |
+| **Vision Agent account** | Any paid or free tier (needs API key)    |
+| **MCP client**           | Claude Desktop / Cursor / Cline / *etc.* |
 
 ---
 
 ## ⚙️ Configuration
 
-### Environment variables
+| ENV var                 | Required | Default    | Purpose                                                |
+| ----------------------- | -------- | ---------- | ------------------------------------------------------ |
+| `VISION_AGENT_API_KEY`  | **Yes**  | —          | Landing AI auth token.                                 |
+| `OUTPUT_DIRECTORY`      | No       | `./output` | Where rendered images / masks / depth maps are stored. |
+| `IMAGE_DISPLAY_ENABLED` | No       | `true`     | `false` ➜ skip rendering; only return file paths.      |
 
-| Variable                | Required | Default    | Description                                     |
-| ----------------------- | -------- | ---------- | ----------------------------------------------- |
-| `VISION_AGENT_API_KEY`  | **Yes**  | –          | Auth token from Landing AI                      |
-| `OUTPUT_DIRECTORY`      | No       | `./output` | Where processed images / JSON go                |
-| `IMAGE_DISPLAY_ENABLED` | No       | `true`     | Set `false` if your client can’t preview images |
+> **Tip**  Create a local `.env` file for convenience—`dotenv` is auto-loaded by `src/index.ts`.
 
-### Client snippet (`.mcp.json` for VS Code / Cursor)
+### Sample MCP client entry (`.mcp.json` for VS Code / Cursor)
 
 ```jsonc
 {
@@ -135,7 +149,7 @@ npx <!-- TODO:pkg-name -->@latest
       "args": ["./build/index.js"],
       "env": {
         "VISION_AGENT_API_KEY": "YOUR_API_KEY_HERE",
-        "OUTPUT_DIRECTORY": "../../output",
+        "OUTPUT_DIRECTORY": "./output",
         "IMAGE_DISPLAY_ENABLED": "true"
       }
     }
@@ -143,66 +157,68 @@ npx <!-- TODO:pkg-name -->@latest
 }
 ```
 
-> **Tip**: Point `args[0]` to the built `index.js` wherever it lives on your machine.
-
 ---
 
 ## 💡 Example Prompts
 
-| Use case                  | Prompt                                                                                         |
-| ------------------------- | ---------------------------------------------------------------------------------------------- |
-| **Invoice parsing**       | “Extract vendor name, invoice date and total from this PDF using `agentic-document-analysis`.” |
-| **Object detection**      | “Locate every pedestrian in *street.jpg* with `text-to-object-detection`.”                     |
-| **Instance segmentation** | “Segment all tomatoes in *kitchen.png* via `text-to-instance-segmentation`.”                   |
-| **Activity recognition**  | “What sports are being played in *game.mp4*? Use `activity-recognition`.”                      |
-| **Depth maps**            | “Generate a depth map for *selfie.png* with `depth-pro`.”                                      |
-
-Copy–paste any line above into your MCP client chat after uploading the file(s).
+| Scenario                     | Prompt (after uploading file)                                                             |
+| ---------------------------- | ----------------------------------------------------------------------------------------- |
+| Invoice extraction           | *“Extract vendor, invoice date & total from this PDF using `agentic-document-analysis`.”* |
+| Object detection             | *“Locate every pedestrian in **street.jpg** via `text-to-object-detection`.”*             |
+| Instance segmentation        | *“Segment all tomatoes in **kitchen.png** with `text-to-instance-segmentation`.”*         |
+| Activity recognition (video) | *“Identify activities occurring in **match.mp4** via `activity-recognition`.”*            |
+| Depth estimation             | *“Produce a depth map for **selfie.png** using `depth-pro`.”*                             |
 
 ---
 
-## 🛠 How It Works
+## 🏗 Architecture & Flow
 
+```text
+┌────────────────────┐ 1. human prompt            ┌───────────────────┐
+│ MCP-capable client │───────────────────────────▶│  Vision Agent MCP │
+│  (Cursor, Claude)  │                            │   (this repo)     │
+└────────────────────┘                            └─────────▲─────────┘
+            ▲  6. rendered PNG / JSON                     │ 2. JSON tool call
+            │                                             │
+            │ 5. preview path / data   3. HTTPS           │
+            │                                             ▼
+       local disk  ◀──────────┐                Landing AI Vision Agent
+                               └──────────────▶  Cloud APIs
+                                           4. JSON / media blob
 ```
-┌────────────┐   MCP JSON   ┌────────────────┐
-│  MCP Client│ ───────────▶ │Vision Agent MCP│
-└────────────┘              │   (this repo)  │
-       ▲  ▲  human prompt   │                │
-       │  └────────────────▶│Tool executor   │
-       │                    └───────▲────────┘
-       │  image / json              │ REST
-       └────────────────────────────┘
-                   Vision Agent API (cloud)
-```
 
-1. Your MCP client sends a JSON tool-call to the local server.
-2. The server forwards the request to the appropriate Vision Agent REST endpoint.
-3. Results (JSON + optional images) stream back and are surfaced in chat.
-4. If `IMAGE_DISPLAY_ENABLED=true`, image artifacts are saved to `OUTPUT_DIRECTORY` and their paths are returned so the client can preview them inline.
-
-All tool definitions are auto-generated from the public [OpenAPI spec](https://api.va.landing.ai/openapi.json) each time you run `npm run generate-tools`, ensuring parity with new Vision Agent features.
+1. **Prompt → tool-call** The client converts your natural-language prompt into a structured MCP call.
+2. **Validation** The server validates args with Zod schemas derived from the live OpenAPI spec.
+3. **Forward** An authenticated Axios request hits the Vision Agent endpoint.
+4. **Response** JSON + any base64 media are returned.
+5. **Visualisation** If enabled, masks / boxes / depth maps are rendered to files.
+6. **Return to chat** The MCP client receives data + file paths (or inline previews).
 
 ---
 
 ## 🧑‍💻 Developer Guide
 
-| Script                   | What it does                                             |
-| ------------------------ | -------------------------------------------------------- |
-| `npm run build`          | TypeScript → `build/` (adds executable bit)              |
-| `npm run start`          | **Build plus run** (`node build/index.js`)               |
-| `npm run typecheck`      | `tsc --noEmit`                                           |
-| `npm run generate-tools` | Pulls latest OpenAPI, regenerates `toolDefinitionMap.ts` |
-| `npm run build:all`      | `build` **+** `generate-tools`                           |
+| Script                   | Purpose                                                            |
+| ------------------------ | ------------------------------------------------------------------ |
+| `npm run build`          | Compile TS → `build/` (adds executable bit).                       |
+| `npm run start`          | Build *and* run (`node build/index.js`).                           |
+| `npm run typecheck`      | Type-only check (`tsc --noEmit`).                                  |
+| `npm run generate-tools` | Fetch latest public OpenAPI and regenerate `toolDefinitionMap.ts`. |
+| `npm run build:all`      | Convenience: `build` + `generate-tools`.                           |
 
-### Project structure (top-level)
+### Project layout
 
 ```text
 src/
-  cli.ts              ← entry for `npm start`
-  server.ts           ← MCP server impl
-  generateTools.ts    ← pulls / transforms OpenAPI spec
-  …                   
-build/                ← compiled JS (ignored until build)
+  index.ts            # CLI entry (dotenv, signal handlers, startServer)
+  server/
+    index.ts          # MCP server w/ Stdio transport
+    handlers.ts       # listTools, callTool, etc.
+    visualization.ts  # camera-ready rendering for each tool
+  generateTools.ts    # Dev script (OpenAPI → TS map)
+  utils/              # file.ts, http.ts, etc.
+build/                # compiled JS (git-ignored)
+output/               # runtime artifacts (bounding boxes, masks, …)
 ```
 
 ---
@@ -210,24 +226,31 @@ build/                ← compiled JS (ignored until build)
 ## 🛟 Troubleshooting
 
 <details>
-<summary>“Authentication failed”</summary>
+<summary><strong>Authentication failed</strong></summary>
 
-* Make sure `VISION_AGENT_API_KEY` is correct and **not expired**.
-* Double-check that your network allows outbound HTTPS to `api.va.landing.ai`.
-
-</details>
-
-<details>
-<summary>“Client says: tool not found”</summary>
-
-Run `npm run generate-tools` to refresh tool definitions, then restart the server.
+* Verify `VISION_AGENT_API_KEY` is correct and active.
+* Free tiers have rate limits—check your dashboard.
+* Ensure outbound HTTPS to `api.va.landing.ai` isn’t blocked by a proxy/VPN.
 
 </details>
 
 <details>
-<summary>Node &lt; 20 errors</summary>
+<summary><strong>“Tool not found” in chat</strong></summary>
 
-The repo targets modern language features enabled in Node 20+. Upgrade Node or use `nvm` to switch versions.
+The local tool map may be stale. Run:
+
+```bash
+npm run generate-tools
+npm start
+```
+
+</details>
+
+<details>
+<summary><strong>Node &lt; 20 error</strong></summary>
+
+The code uses the Blob & FormData APIs natively introduced in Node 20.
+Upgrade via `nvm install 20` (mac/Linux) or download from nodejs.org if on Windows.
 
 </details>
 
@@ -235,42 +258,52 @@ The repo targets modern language features enabled in Node 20+. Upgrade Node or u
 
 ## 🤝 Contributing
 
-1. **Fork** and create a feature branch.
-2. Run `npm test` (coming soon) and `npm run typecheck`.
-3. Open a PR—please describe **what** it changes and **why**.
-4. All contributions follow the [Contributor Covenant](CODE_OF_CONDUCT.md).
+We love PRs!
+
+1. **Fork** → `git checkout -b feature/my-feature`.
+2. `npm run typecheck` (no errors) & `npm test` <!-- TODO: add tests or update -->.
+3. Open a PR explaining **what** and **why**.
+4. CI must pass (lint, unit tests) before merge.
+
+All contributors agree to the [Contributor Covenant](CODE_OF_CONDUCT.md).
 
 ---
 
 ## 🗓 Roadmap
 
-| Version  | Planned features                                      |
-| -------- | ----------------------------------------------------- |
-| **v0.2** | Docker image published, CI pipeline, basic unit tests |
-| **v0.3** | Streaming progress messages & retry logic             |
-| **v1.0** | Stable API, semver guarantees, formal docs site       |
+| Version  | Highlights (tentative)                                               |
+| -------- | -------------------------------------------------------------------- |
+| **v0.2** | Publish official Docker image · GitHub Actions CI · Basic unit tests |
+| **v0.3** | Streaming progress updates · Automatic retries w/ back-off           |
+| **v1.0** | Stable semver · Extended docs site · Windows MSI installer           |
 
-*(Have ideas? Open a discussion or PR!)*
+Got a feature request? Open an issue or start a GitHub discussion.
+
+---
+
+## 🔒 Security & Privacy
+
+* The MCP server runs **locally**—no files are forwarded anywhere except Landing AI’s API endpoints you explicitly call.
+* Output images/masks are written to `OUTPUT_DIRECTORY` **only on your machine**.
+* No telemetry is collected by this project.
+* If you discover a vulnerability, please file a private security report (see `SECURITY.md`). <!-- TODO: provide a SECURITY.md or remove -->
 
 ---
 
 ## 📜 License
 
-<!-- TODO: choose license if not MIT -->
-
-Distributed under the MIT License.
-See [`LICENSE`](LICENSE) for details.
+Distributed under the **MIT License**.
+See [`LICENSE`](LICENSE) for the full text. <!-- TODO: swap if using Apache-2.0 or other -->
 
 ---
 
-*Made with ❤️ by the LandingAI Team.*
+> *Made with ❤️ by the LandingAI Team.*
 
----
 
-### Placeholders to be filled?
+### What’s still left to plug in
 
-* **CI badge URL and workflow file name**  
-* **Actual npm package name** (if you decide to publish)  
-* **GIF/Screenshot** for the quick test (drop a file in `/docs` and reference it)  
-* **Final License type** (MIT, Apache-2.0, …)
-
+* **Actual npm package name** (`<!-- TODO:pkg-name -->`) once you publish.  
+* **CI badge URL**—update once your GitHub Actions workflow is named and merged.  
+* **Demo GIF** path (`assets/demo.gif`) or remove the image block.  
+* **Security policy** (`SECURITY.md`) if you decide to maintain one.  
+* **Unit tests** (and the accompanying `npm test`)—the scaffold is there but currently empty.
