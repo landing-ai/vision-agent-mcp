@@ -1,9 +1,4 @@
-Everything that’s currently known is included; anything still unknown (e.g., exact npm package name, CI badge URL, license type) is clearly marked with **TODO** comments so we can fill them in later—no silent assumptions were made.
-
----
-
-````markdown
-# Vision Agent MCP Server <!-- TODO: replace with final repo name if different -->
+# Vision Agent MCP Server 
 
 <!-- Badges (fill in real links) -->
 [![npm](https://img.shields.io/npm/v/<!-- TODO:pkg-name -->?label=npm)](https://www.npmjs.com/package/<!-- TODO:pkg-name -->)
@@ -15,7 +10,7 @@ Everything that’s currently known is included; anything still unknown (e.g., e
 
 ---
 
-## ✨ Overview
+## Overview
 
 The **Vision Agent MCP Server** implements the [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) so that large-language-model “agents” can call Landing AI’s Vision Agent APIs from any MCP-compatible client (Claude Desktop, Cursor, Cline, …).
 
