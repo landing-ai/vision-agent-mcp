@@ -251,8 +251,6 @@ We love PRs!
 3. Open a PR explaining **what** and **why**.
 4. CI must pass (lint, unit tests) before merge.
 
-All contributors agree to the [Contributor Covenant](CODE_OF_CONDUCT.md).
-
 
 ## 🗓 Roadmap
 
