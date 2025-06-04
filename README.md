@@ -154,28 +154,166 @@ If your client supports inline resources, you’ll see bounding-box overlays; ot
 
 ## 🧑‍💻 Developer Guide
 
-| Script                   | Purpose                                                            |
-| ------------------------ | ------------------------------------------------------------------ |
-| `npm run build`          | Compile TS → `build/` (adds executable bit).                       |
-| `npm run start`          | Build *and* run (`node build/index.js`).                           |
-| `npm run typecheck`      | Type-only check (`tsc --noEmit`).                                  |
-| `npm run generate-tools` | Fetch latest public OpenAPI and regenerate `toolDefinitionMap.ts`. |
-| `npm run build:all`      | Convenience: `build` + `generate-tools`.                           |
+Here’s how to dive into the code, add new endpoints, or troubleshoot issues.
 
-### Project layout
+### 📑 Scripts & Commands
+
+| Script                   | Purpose                                                     |
+| ------------------------ | ----------------------------------------------------------- |
+| `npm run build`          | Compile TypeScript → `build/` (adds executable bit).        |
+| `npm run start`          | Build *and* run (`node build/index.js`).                    |
+| `npm run typecheck`      | Type-only check (`tsc --noEmit`).                           |
+| `npm run generate-tools` | Fetch latest OpenAPI and regenerate `toolDefinitionMap.ts`. |
+| `npm run build:all`      | Convenience: `npm run build` + `npm run generate-tools`.    |
+
+> **Pro Tip**: If you modify any files under `src/` or want to pick up new endpoints from Vision Agent, run `npm run build:all` to recompile + regenerate tool definitions.
+
+
+### 📂 Project Layout
 
 ```text
-src/
-  index.ts            # CLI entry (dotenv, signal handlers, startServer)
-  server/
-    index.ts          # MCP server w/ Stdio transport
-    handlers.ts       # listTools, callTool, etc.
-    visualization.ts  # camera-ready rendering for each tool
-  generateTools.ts    # Dev script (OpenAPI → TS map)
-  utils/              # file.ts, http.ts, etc.
-build/                # compiled JS (git-ignored)
-output/               # runtime artifacts (bounding boxes, masks, …)
+vision-agent-mcp/
+├── .eslintrc.json              # ESLint config (optional)
+├── .gitignore                  # Ignore node_modules, build/, .env, etc.
+├── jest.config.js              # Placeholder for future unit tests
+├── mcp-va.md                   # Draft docs (incomplete)
+├── package.json                # npm metadata, scripts, dependencies
+├── package-lock.json           # Lockfile
+├── tsconfig.json               # TypeScript compiler config
+├── .env                        # Your environment variables (not committed)
+│
+├── src/                        # TypeScript source code
+│   ├── generateTools.ts        # Dev script: fetch OpenAPI → generate MCP tool definitions (Zod schemas)
+│   ├── index.ts                # Entry point: load .env, start MCP server, handle signals
+│   ├── toolDefinitionMap.ts    # Auto-generated MCP tool definitions (don’t edit by hand)
+│   ├── toolUtils.ts            # Helpers to build MCP tool objects (metadata, descriptions)
+│   ├── types.ts                # Core TS interfaces (MCP, environment config, etc.)
+│   │
+│   ├── server/                 # MCP server logic
+│   │   ├── index.ts            # Create & start the MCP server (Server + Stdio transport)
+│   │   ├── handlers.ts         # `handleListTools` & `handleCallTool` implementations
+│   │   ├── visualization.ts    # Post-process & save image/video outputs (masks, boxes, depth maps)
+│   │   └── config.ts           # Load & validate .env, export SERVER_CONFIG & EnvConfig
+│   │
+│   ├── utils/                  # Generic utilities
+│   │   ├── file.ts             # File handling (base64 encode images/PDFs, read streams)
+│   │   └── http.ts             # Axios wrappers & error formatting
+│   │
+│   └── validation/             # Zod schema generation & argument validation
+│       └── schema.ts           # Convert JSON Schema → Zod, validate incoming tool args
+│
+├── build/                      # Compiled JavaScript (generated after `npm run build`)
+│   ├── index.js
+│   ├── generateTools.js
+│   ├── toolDefinitionMap.js
+│   └── …                       # Mirror of `src/` structure
+│
+├── output/                     # Runtime artifacts (bounding boxes, masks, depth maps, etc.)
+│
+└── assets/                     # Static assets (e.g., demo.gif)
+    └── demo.gif
 ```
+
+### 🔍 Key Components
+
+1. **`src/generateTools.ts`**
+
+   * Fetches `https://api.va.landing.ai/openapi.json` (Vision Agent’s public OpenAPI).
+   * Filters endpoints via a whitelist (or you can disable filtering to include all).
+   * Converts JSON Schema → Zod schemas, writes `toolDefinitionMap.ts` with a `Map<string, McpToolDefinition>`.
+   * Run: `npm run generate-tools`.
+
+2. **`src/toolDefinitionMap.ts`**
+
+   * Contains a map of tool names → MCP definitions (name, description, inputSchema, endpoint, HTTP method).
+   * Generated automatically—**do NOT edit by hand**.
+
+3. **`src/server/handlers.ts`**
+
+   * Implements `handleListTools`: returns `[ { name, description, inputSchema } ]`.
+   * Implements `handleCallTool`:
+
+     * Validates incoming `arguments` with Zod.
+     * If file-based args (e.g., `imagePath`, `pdfPath`), reads & base64-encodes via `src/utils/file.ts`.
+     * Builds a multipart/form-data or JSON payload for Axios.
+     * Calls Vision Agent endpoint, catches errors, returns MCP-compliant JSON response.
+     * If `IMAGE_DISPLAY_ENABLED=true`, calls `src/server/visualization.ts` to save PNGs/JSON.
+
+4. **`src/server/visualization.ts`**
+
+   * Post-processes masks (base64 → PNG).
+   * Optionally overlays bounding boxes or segmentation masks on the original image, saves to `OUTPUT_DIRECTORY`.
+   * Returns file paths in MCP result so your client can render them.
+
+5. **`src/utils/file.ts`**
+
+   * `readFileAsBase64(path: string): Promise<string>`: Reads any binary (image, PDF, video) and returns base64.
+   * `loadFileStream(path: string)`: Returns a Node.js stream for large file uploads.
+
+6. **`src/utils/http.ts`**
+
+   * Configures Axios with base URL `https://api.va.landing.ai`.
+   * Adds `Authorization: Bearer ${VISION_AGENT_API_KEY}` header.
+   * Wraps calls to Vision Agent endpoints, handles 4xx/5xx, formats errors into MCP error objects.
+
+7. **`src/validation/schema.ts`**
+
+   * Contains helpers to convert JSON Schema (from OpenAPI) → Zod.
+   * Exposes a function `buildZodSchema(jsonSchema: any): ZodObject` used by `generateTools.ts`.
+
+8. **`src/index.ts`**
+
+   * Loads `dotenv` (reads `.env`).
+   * Validates required env vars (`VISION_AGENT_API_KEY`).
+   * Imports generated `toolDefinitionMap`.
+   * Creates an MCP `Server` (from `@modelcontextprotocol/sdk/server`) with `StdioServerTransport`.
+   * Wires `ListTools` → `handleListTools`, `CallTool` → `handleCallTool`.
+   * Logs startup info:
+
+     ```
+     vision-tools-api MCP Server (v0.1.0) running on stdio, proxying to https://api.va.landing.ai
+     ```
+   * Listens for `SIGINT`/`SIGTERM` to gracefully shut down.
+
+
+### 🚧 Error Handling & Logs
+
+* **Validation Errors**
+  If you send invalid or missing parameters, the server returns:
+
+  ```json
+  {
+    "id": 3,
+    "error": {
+      "code": -32602,
+      "message": "Validation error: missing required parameter ‘imagePath’"
+    }
+  }
+  ```
+* **Network Errors**
+  Axios errors (timeouts, 5xx) are caught and returned as:
+
+  ```json
+  {
+    "id": 4,
+    "error": {
+      "code": -32000,
+      "message": "Vision Agent API error: 502 Bad Gateway"
+    }
+  }
+  ```
+* **Internal Exceptions**
+  Uncaught exceptions in handlers produce:
+
+  ```json
+  {
+    "id": 5,
+    "error": {
+      "code": -32603,
+      "message": "Internal error: Unexpected token in JSON at position 345"
+    }
+  }
+  ```
 
 
 ## 🛟 Troubleshooting
