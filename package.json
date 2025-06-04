@@ -2,7 +2,6 @@
   "name": "vision-tools-mcp",
   "version": "0.1.0",
   "description": "MCP Server for vision-tools-api",
-  "private": true,
   "type": "module",
   "main": "build/index.js",
   "files": [
