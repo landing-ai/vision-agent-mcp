@@ -1,79 +1,68 @@
-# Vision Agent MCP (v0.1)
+# Vision Agent MCP Server
 
-An MCP package for Vision Agent that brings powerful computer vision and document analysis tools to the Model Context Protocol.
+<!-- ───────────────────────────── Badges ───────────────────────────── -->
+<!-- Replace all TODOs with real links once available -->
 
-![Demo of Vision Agent with Claude Code](assets/demo.gif)
+[![npm](https://img.shields.io/npm/v/vision-tools-mcp?label=npm)](https://www.npmjs.com/package/vision-tools-mcp)
+[![build](https://img.shields.io/github/actions/workflow/status/landing-ai/vision-agent-mcp/ci.yml?branch=main)]
+
+> **Beta – v0.1**  
+> This project is **early access** and subject to breaking changes until v1.0.
 
 
-## What can you do with the Vision Agent MCP server?
+## Vision Agent MCP Server v0.1 - Overview
 
-This MCP server provides access to the following Vision Agent API tools:
+Modern LLM “agents” call external tools through the **Model Context Protocol (MCP)**.
+**Vision Agent MCP** is a lightweight, side-car MCP server that runs locally on STDIN/STDOUT, translating each tool call from an MCP-compatible client (Claude Desktop, Cursor, Cline, etc.) into an authenticated HTTPS request to Landing AI’s Vision Agent REST APIs. The response JSON, plus any images or masks, is streamed back to the model so that you can issue natural-language computer-vision and document-analysis commands from your editor without writing custom REST code or loading an extra SDK.
 
-### **agentic-document-analysis**
-Extract and analyze structured information from documents using AI agents. Performs intelligent document processing to extract text, metadata, and structured data from images and PDFs. See [here](https://va.landing.ai/demo/doc-extraction) for the web version.
 
-### **text-to-object-detection**
-Detect objects in images or videos based on text prompts using advanced computer vision models (OWLv2, CountGD, Florence2). Identifies and locates objects described in natural language with bounding boxes and confidence scores.
+## 📸 Demo
 
-### **text-to-instance-segmentation**
-Generate precise pixel-level segmentation masks for objects based on text descriptions. Combines Florence2 with SAM2 (Segment Anything Model 2) to create detailed instance segmentation masks.
+![Demo of Vision Agent + Claude Code](assets/demo.gif)
 
-### **activity-recognition**
-Analyze video content to identify and describe human activities and behaviors. Processes video streams with temporal understanding to recognize activities with timestamped events.
 
-### **depth-pro**
-Generate high-quality depth information from single images. Uses advanced depth estimation models to create depth maps showing relative distances of objects from the camera viewpoint.
+## 🧰 Supported Use Cases (v0.1)
 
-## Installation & Build
+| Capability                    | Description                                                                                                       |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **`agentic-document-analysis`** | Parse PDFs / images to extract text, tables, charts, and diagrams taking into account layouts and other visual cues. Web Version [here](https://va.landing.ai/demo/doc-extraction).|
+| **`text-to-object-detection`** | Detect free-form prompts (“all traffic lights”) using OWLv2 / CountGD / Florence-2 / Agentic Object Detection (Web Version [here](https://va.landing.ai/demo/agentic-od)); outputs bounding boxes.        |
+| **`text-to-instance-segmentation`** | Pixel-perfect masks via Florence-2 + Segment-Anything-v2 (SAM-2).                                              |
+| **`activity-recognition`**     | Recognise multiple activities in video with start/end timestamps.                                           |
+| **`depth-pro`**                | High-resolution monocular depth estimation for single images.                                                    |
 
-1. Clone the repository:
+> Run **`npm run generate-tools`** whenever Vision Agent releases new endpoints. The script fetches the latest OpenAPI spec and regenerates the local tool map automatically.
 
-   ```bash
-   git clone https://github.com/landing-ai/vision-agent-mcp.git
-   ```
 
-2. Navigate into the project directory:
+## 🗺 Table of Contents
+1. [Quick Start](#-quick-start)
+2. [Configuration](#-configuration)
+3. [Example Prompts](#-example-prompts)
+4. [Architecture & Flow](#-architecture--flow)
+5. [Developer Guide](#-developer-guide)
+6. [Troubleshooting](#-troubleshooting)
+7. [Contributing](#-contributing)
+8. [Security & Privacy](#-security--privacy)
 
-   ```bash
-   cd vision-agent-mcp
-   ```
 
-3. Install dependencies:
+## 🚀 Quick Start
 
-   ```bash
-   npm install
-   ```
+```bash
+# 1  Install
+npm install -g vision-tools-mcp
 
-4. Build the project:
+# 2  Set your Vision Agent API key
+export VISION_AGENT_API_KEY="<YOUR_API_KEY>"
 
-   ```bash
-   npm run build
-   ```
-
-### Get Your VisionAgent API Key
-If you do not have a VisionAgent API key, [create an account](https://va.landing.ai/home) and obtain your [API key](https://va.landing.ai/settings/api-key).
-
-## Environment Variables
-
-- `VISION_AGENT_API_KEY` - **Required** API key for Vision Agent authentication
-- `OUTPUT_DIRECTORY` - Optional directory for saving processed outputs (supports relative and absolute paths)
-- `IMAGE_DISPLAY_ENABLED` - Set to `"true"` to enable image visualization features
-
-## Client Configuration
-
-After building, configure your MCP client with the following settings:
-
-```json
+# 3  Configure your MCP client with the following settings:
 {
   "mcpServers": {
     "Vision Agent": {
-      "command": "node",
-      "args": [
-        "/path/to/build/index.js"
-      ],
+      "command": "npx",
+      "args": ["vision-tools-mcp"],
       "env": {
-        "VISION_AGENT_API_KEY": "YOUR_API_KEY_HERE",
-        "OUTPUT_DIRECTORY": "../../output",
+        "VISION_AGENT_API_KEY": "<YOUR_API_KEY>",
+        "OUTPUT_DIRECTORY": "/path/to/output/directory",
         "IMAGE_DISPLAY_ENABLED": "true"
       }
     }
@@ -81,28 +70,159 @@ After building, configure your MCP client with the following settings:
 }
 ```
 
-> **Note:** Replace `/path/to/build/index.js` with the actual path to your built `index.js` file, and set your environment variables as needed. For MCP clients without image display capabilities, like Cursor, set IMAGE_DISPLAY_ENABLED to False. For MCP clients with image display capabilities, like Claude Desktop, set IMAGE_DISPLAY_ENABLED to true to visualize tool outputs. Generally, MCP clients that support resources (see this list: https://modelcontextprotocol.io/clients) will support image display.
+1. Open your MCP-aware client.
+2. Upload *street.jpg* (or any test image).
+3. Paste the prompt below (or any prompt):
 
-## Development Commands
+```
+Detect all traffic lights in street.jpg using text-to-object-detection
+```
 
-### Build Commands
-- `npm run build` - Compile TypeScript to build/ directory with executable permissions
-- `npm run build:all` - Full build including tool generation (runs `npm run build && npm run generate-tools`)
-- `npm run typecheck` - Type check without emitting files
+If your client supports inline resources you’ll see bounding-box overlays; otherwise, the PNG is saved to your output directory, and the chat shows its path.
 
-### Tool Management
-- `npm run generate-tools` - Fetch latest tool definitions from Vision Agent API and update tool mappings
-- This command:
-  - Fetches the OpenAPI specification from `https://api.va.landing.ai/openapi.json`
-  - Filters tools based on the whitelist in `src/generateTools.ts`
-  - Generates `toolDefinitionMap.ts` in both `src/` and `build/` directories
-  - Updates MCP tool definitions to match the latest API
 
-### Running
-- `npm start` - Build and run the MCP server
+### Prerequisites
 
-## Requirements
+| Software                 | Minimum Version                          |
+| ------------------------ | ---------------------------------------- |
+| **Node.js**              | 20 (LTS)                                 |
+| **Vision Agent account** | Any paid or free tier (needs API key)    |
+| **MCP client**           | Claude Desktop / Cursor / Cline / *etc.* |
 
-- Node.js >= 20.0.0
-- Vision Agent API key
-- MCP-compatible client (e.g., Claude Desktop, Cursor, Cline, etc.)
+
+## ⚙️ Configuration
+
+| ENV var                 | Required | Default    | Purpose                                                |
+| ----------------------- | -------- | ---------- | ------------------------------------------------------ |
+| `VISION_AGENT_API_KEY`  | **Yes**  | —          | Landing AI auth token.                                 |
+| `OUTPUT_DIRECTORY`      | No       | -          | Where rendered images / masks / depth maps are stored. |
+| `IMAGE_DISPLAY_ENABLED` | No       | `true`     | `false` ➜ skip rendering                               |
+
+### Sample MCP client entry (`.mcp.json` for VS Code / Cursor)
+
+```jsonc
+{
+  "mcpServers": {
+    "Vision Agent": {
+      "command": "npx",
+      "args": ["vision-tools-mcp"],
+      "env": {
+        "VISION_AGENT_API_KEY": "912jkefief09jfjkMfoklwOWdp9293jefklwfweLQWO9jfjkMfoklwDK",
+        "OUTPUT_DIRECTORY": "/Users/me/documents/mcp/test",
+        "IMAGE_DISPLAY_ENABLED": "true"
+      }
+    }
+  }
+}
+```
+
+
+## 💡 Example Prompts
+
+| Scenario                     | Prompt (after uploading file)                                                             |
+| ---------------------------- | ----------------------------------------------------------------------------------------- |
+| Invoice extraction           | *“Extract vendor, invoice date & total from this PDF using `agentic-document-analysis`.”* |
+| Pedrestrian Recognition      | *“Locate every pedestrian in **street.jpg** via `text-to-object-detection`.”*             |
+| Agricultural segmentation    | *“Segment all tomatoes in **kitchen.png** with `text-to-instance-segmentation`.”*         |
+| Activity recognition (video) | *“Identify activities occurring in **match.mp4** via `activity-recognition`.”*            |
+| Depth estimation             | *“Produce a depth map for **selfie.png** using `depth-pro`.”*                             |
+
+
+## 🏗 Architecture & Flow
+
+```text
+┌────────────────────┐ 1. human prompt            ┌───────────────────┐
+│ MCP-capable client │───────────────────────────▶│  Vision Agent MCP │
+│  (Cursor, Claude)  │                            │   (this repo)     │
+└────────────────────┘                            └─────────▲─────────┘
+            ▲  6. rendered PNG / JSON                     │ 2. JSON tool call
+            │                                             │
+            │ 5. preview path / data         3. HTTPS     │
+            │                                             ▼
+       local disk  ◀──────────┐                Landing AI Vision Agent
+                               └──────────────  Cloud APIs
+                                           4. JSON / media blob
+```
+
+1. **Prompt → tool-call** The client converts your natural-language prompt into a structured MCP call.
+2. **Validation** The server validates args with Zod schemas derived from the live OpenAPI spec.
+3. **Forward** An authenticated Axios request hits the Vision Agent endpoint.
+4. **Response** JSON + any base64 media are returned.
+5. **Visualization** If enabled, masks / boxes / depth maps are rendered to files.
+6. **Return to chat** The MCP client receives data + file paths (or inline previews).
+
+
+## 🧑‍💻 Developer Guide
+
+| Script                   | Purpose                                                            |
+| ------------------------ | ------------------------------------------------------------------ |
+| `npm run build`          | Compile TS → `build/` (adds executable bit).                       |
+| `npm run start`          | Build *and* run (`node build/index.js`).                           |
+| `npm run typecheck`      | Type-only check (`tsc --noEmit`).                                  |
+| `npm run generate-tools` | Fetch latest public OpenAPI and regenerate `toolDefinitionMap.ts`. |
+| `npm run build:all`      | Convenience: `build` + `generate-tools`.                           |
+
+### Project layout
+
+```text
+src/
+  index.ts            # CLI entry (dotenv, signal handlers, startServer)
+  server/
+    index.ts          # MCP server w/ Stdio transport
+    handlers.ts       # listTools, callTool, etc.
+    visualization.ts  # camera-ready rendering for each tool
+  generateTools.ts    # Dev script (OpenAPI → TS map)
+  utils/              # file.ts, http.ts, etc.
+build/                # compiled JS (git-ignored)
+output/               # runtime artifacts (bounding boxes, masks, …)
+```
+
+
+## 🛟 Troubleshooting
+
+<details>
+<summary><strong>Authentication failed</strong></summary>
+
+* Verify `VISION_AGENT_API_KEY` is correct and active.
+* Free tiers have rate limits—check your dashboard.
+* Ensure outbound HTTPS to `api.va.landing.ai` isn’t blocked by a proxy/VPN.
+
+</details>
+
+<details>
+<summary><strong>“Tool not found” in chat</strong></summary>
+
+The local tool map may be stale. Run:
+
+```bash
+npm run generate-tools
+npm start
+```
+
+</details>
+
+<details>
+<summary><strong>Node &lt; 20 error</strong></summary>
+
+The code uses the Blob & FormData APIs natively introduced in Node 20.
+Upgrade via `nvm install 20` (mac/Linux) or download from nodejs.org if on Windows.
+
+</details>
+
+
+## 🤝 Contributing
+
+We love PRs!
+
+1. **Fork** → `git checkout -b feature/my-feature`.
+2. `npm run typecheck` (no errors)
+3. Open a PR explaining **what** and **why**.
+
+## 🔒 Security & Privacy
+
+* The MCP server runs **locally**, so no files are forwarded anywhere except Landing AI’s API endpoints you explicitly call.
+* Output images/masks are written to `OUTPUT_DIRECTORY` **only on your machine**.
+* No telemetry is collected by this project.
+
+
+> *Made with ❤️ by the LandingAI Team.*
