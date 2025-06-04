@@ -1,6 +1,7 @@
 # Vision Agent MCP Server 
 
 <!-- Badges (fill in real links) -->
+
 [![npm](https://img.shields.io/npm/v/<!-- TODO:pkg-name -->?label=npm)](https://www.npmjs.com/package/<!-- TODO:pkg-name -->)
 [![build](https://img.shields.io/github/actions/workflow/status/landing-ai/vision-agent-mcp/ci.yml)](<!-- TODO:actions-link -->)
 [![license](https://img.shields.io/github/license/landing-ai/vision-agent-mcp)](LICENSE)
@@ -13,6 +14,8 @@
 ## Overview
 
 The **Vision Agent MCP Server** implements the [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) so that large-language-model “agents” can call Landing AI’s Vision Agent APIs from any MCP-compatible client (Claude Desktop, Cursor, Cline, …).
+
+![Demo of Vision Agent with Claude Code](assets/demo.gif)
 
 ### Supported Vision Agent tools (v0.1)
 
