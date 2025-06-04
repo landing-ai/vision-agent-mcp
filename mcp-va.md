@@ -21,7 +21,6 @@ Modern LLM “agents” call external tools through the **Model Context Protocol
 
 ![Demo of Vision Agent + Claude Code](assets/demo.gif) <!-- TODO: provide a real GIF or remove -->
 
----
 
 ## 🧰 Supported Vision Agent tools (v0.1)
 
@@ -35,7 +34,6 @@ Modern LLM “agents” call external tools through the **Model Context Protocol
 
 > Run **`npm run generate-tools`** whenever Vision Agent releases new endpoints—the script fetches the latest OpenAPI spec and regenerates the local tool map automatically.
 
----
 
 ## 🗺 Table of Contents
 1. [Quick Start](#-quick-start)
@@ -50,7 +48,6 @@ Modern LLM “agents” call external tools through the **Model Context Protocol
 10. [Security & Privacy](#-security--privacy)
 11. [License](#-license)
 
----
 
 ## 🚀 Quick Start
 
@@ -80,7 +77,6 @@ Detect all traffic lights in street.jpg using text-to-object-detection
 
 If your client supports inline resources you’ll see bounding-box overlays; otherwise, the PNG is saved to `./output` and the chat shows its path.
 
----
 
 ## 📦 Installation Options
 
@@ -123,7 +119,6 @@ npx <!-- TODO:pkg-name -->@latest
 | **Vision Agent account** | Any paid or free tier (needs API key)    |
 | **MCP client**           | Claude Desktop / Cursor / Cline / *etc.* |
 
----
 
 ## ⚙️ Configuration
 
@@ -153,7 +148,6 @@ npx <!-- TODO:pkg-name -->@latest
 }
 ```
 
----
 
 ## 💡 Example Prompts
 
@@ -165,7 +159,6 @@ npx <!-- TODO:pkg-name -->@latest
 | Activity recognition (video) | *“Identify activities occurring in **match.mp4** via `activity-recognition`.”*            |
 | Depth estimation             | *“Produce a depth map for **selfie.png** using `depth-pro`.”*                             |
 
----
 
 ## 🏗 Architecture & Flow
 
@@ -190,7 +183,6 @@ npx <!-- TODO:pkg-name -->@latest
 5. **Visualisation** If enabled, masks / boxes / depth maps are rendered to files.
 6. **Return to chat** The MCP client receives data + file paths (or inline previews).
 
----
 
 ## 🧑‍💻 Developer Guide
 
@@ -217,7 +209,6 @@ build/                # compiled JS (git-ignored)
 output/               # runtime artifacts (bounding boxes, masks, …)
 ```
 
----
 
 ## 🛟 Troubleshooting
 
@@ -250,7 +241,6 @@ Upgrade via `nvm install 20` (mac/Linux) or download from nodejs.org if on Windo
 
 </details>
 
----
 
 ## 🤝 Contributing
 
@@ -263,7 +253,6 @@ We love PRs!
 
 All contributors agree to the [Contributor Covenant](CODE_OF_CONDUCT.md).
 
----
 
 ## 🗓 Roadmap
 
@@ -275,7 +264,6 @@ All contributors agree to the [Contributor Covenant](CODE_OF_CONDUCT.md).
 
 Got a feature request? Open an issue or start a GitHub discussion.
 
----
 
 ## 🔒 Security & Privacy
 
@@ -284,17 +272,16 @@ Got a feature request? Open an issue or start a GitHub discussion.
 * No telemetry is collected by this project.
 * If you discover a vulnerability, please file a private security report (see `SECURITY.md`). <!-- TODO: provide a SECURITY.md or remove -->
 
----
 
 ## 📜 License
 
 Distributed under the **MIT License**.
 See [`LICENSE`](LICENSE) for the full text. <!-- TODO: swap if using Apache-2.0 or other -->
 
----
 
 > *Made with ❤️ by the LandingAI Team.*
 
+---
 
 ### What’s still left to plug in
 
