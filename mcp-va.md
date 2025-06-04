@@ -26,7 +26,8 @@ Modern LLM “agents” call external tools through the **Model Context Protocol
 
 | Capability                    | Description                                                                                                       |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| **`agentic-document-analysis`** | Parse PDFs / images to extract text, tables, charts, and diagrams taking into account layouts and other visual cues.                                 |
+| **`agentic-document-analysis`** | Parse PDFs / images to extract text, tables, charts, and diagrams taking into account layouts and other visual cues. Web Version [here](https://va.landing.ai/demo/doc-extraction).
+                               |
 | **`text-to-object-detection`** | Detect free-form prompts (“all traffic lights”) using OWLv2 / CountGD / Florence-2; outputs bounding boxes.        |
 | **`text-to-instance-segmentation`** | Pixel-perfect masks via Florence-2 + Segment-Anything-v2 (SAM-2).                                              |
 | **`activity-recognition`**     | Recognise multiple activities at one-pass in video with start/end timestamps.                                           |
