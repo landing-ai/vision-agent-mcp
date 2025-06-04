@@ -47,6 +47,9 @@ Modern LLM “agents” call external tools through the **Model Context Protocol
 
 ## 🚀 Quick Start
 
+### Get Your VisionAgent API Key
+If you do not have a VisionAgent API key, [create an account](https://va.landing.ai/home) and obtain your [API key](https://va.landing.ai/settings/api-key).
+
 ```bash
 # 1  Install
 npm install -g vision-tools-mcp
@@ -63,7 +66,7 @@ export VISION_AGENT_API_KEY="<YOUR_API_KEY>"
       "env": {
         "VISION_AGENT_API_KEY": "<YOUR_API_KEY>",
         "OUTPUT_DIRECTORY": "/path/to/output/directory",
-        "IMAGE_DISPLAY_ENABLED": "true"
+        "IMAGE_DISPLAY_ENABLED": "true" # or false, see below
       }
     }
   }
@@ -109,12 +112,14 @@ If your client supports inline resources, you’ll see bounding-box overlays; ot
       "env": {
         "VISION_AGENT_API_KEY": "912jkefief09jfjkMfoklwOWdp9293jefklwfweLQWO9jfjkMfoklwDK",
         "OUTPUT_DIRECTORY": "/Users/me/documents/mcp/test",
-        "IMAGE_DISPLAY_ENABLED": "true"
+        "IMAGE_DISPLAY_ENABLED": "false"
       }
     }
   }
 }
 ```
+
+For MCP clients without image display capabilities, like Cursor, set IMAGE_DISPLAY_ENABLED to False. For MCP clients with image display capabilities, like Claude Desktop, set IMAGE_DISPLAY_ENABLED to true to visualize tool outputs. Generally, MCP clients that support resources (see this list: https://modelcontextprotocol.io/clients) will support image display.
 
 
 ## 💡 Example Prompts
@@ -155,6 +160,62 @@ If your client supports inline resources, you’ll see bounding-box overlays; ot
 ## 🧑‍💻 Developer Guide
 
 Here’s how to dive into the code, add new endpoints, or troubleshoot issues.
+
+### Installation & Build
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/landing-ai/vision-agent-mcp.git
+   ```
+
+2. Navigate into the project directory:
+
+   ```bash
+   cd vision-agent-mcp
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Build the project:
+
+   ```bash
+   npm run build
+   ```
+
+### Environment Variables
+
+- `VISION_AGENT_API_KEY` - **Required** API key for Vision Agent authentication
+- `OUTPUT_DIRECTORY` - Optional directory for saving processed outputs (supports relative and absolute paths)
+- `IMAGE_DISPLAY_ENABLED` - Set to `"true"` to enable image visualization features
+
+### Client Configuration
+
+After building, configure your MCP client with the following settings:
+
+```json
+{
+  "mcpServers": {
+    "Vision Agent": {
+      "command": "node",
+      "args": [
+        "/path/to/build/index.js"
+      ],
+      "env": {
+        "VISION_AGENT_API_KEY": "<YOUR_API_KEY>",
+        "OUTPUT_DIRECTORY": "../../output",
+        "IMAGE_DISPLAY_ENABLED": "true"
+      }
+    }
+  }
+}
+```
+
+> **Note:** Replace `/path/to/build/index.js` with the actual path to your built `index.js` file, and set your environment variables as needed. For MCP clients without image display capabilities, like Cursor, set IMAGE_DISPLAY_ENABLED to False. For MCP clients with image display capabilities, like Claude Desktop, set IMAGE_DISPLAY_ENABLED to true to visualize tool outputs. Generally, MCP clients that support resources (see this list: https://modelcontextprotocol.io/clients) will support image display.
 
 ### 📑 Scripts & Commands
 
