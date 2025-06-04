@@ -22,7 +22,7 @@ Modern LLM “agents” call external tools through the **Model Context Protocol
 ![Demo of Vision Agent + Claude Code](assets/demo.gif) <!-- TODO: provide a real GIF or remove -->
 
 
-## 🧰 Supported Vision Agent tools (v0.1)
+## 🧰 Supported Use Cases (v0.1)
 
 | Capability                    | Description                                                                                                       |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------- |
