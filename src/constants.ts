@@ -32,9 +32,9 @@ export const IMAGE_PROCESSING = {
     MAX_IMAGE_HEIGHT: 4096,
 } as const;
 
-export const VALIDATION = {
-    // Minimum string length for certain validations
+export const BASE64 = {
     MIN_STRING_LENGTH_THRESHOLD: 1000,
+    MAX_STRING_LENGTH_THRESHOLD: 512 * 512 * 4,
 } as const;
 
 export const ALLOWED_FILE_TYPES = {

@@ -66,8 +66,10 @@ async function createObjectDetectionVisualization(response: any, toolArgs: JsonO
             const [x, y, x2, y2] = det.bounding_box;
             ctx.strokeRect(x, y, x2 - x, y2 - y);
         });
-        
-        return canvas.toBuffer().toString('base64');
+
+        let image = canvas.toBuffer().toString('base64');
+        image = await resizeBase64Image(image);
+        return image;
     } catch (error) {
         console.error('Error creating object detection visualization:', error);
         return null;
@@ -100,7 +102,11 @@ async function createSegmentationVisualization(response: any, toolArgs: JsonObje
             ctx.drawImage(overlayCanvas, 0, 0);
         });
         
-        return canvas.toBuffer().toString('base64');
+
+        let image = canvas.toBuffer().toString('base64');
+        image = await resizeBase64Image(image);
+        return image;
+
     } catch (error) {
         console.error('Error creating segmentation visualization:', error);
         return null;
@@ -114,10 +120,7 @@ async function createActivityVisualization(response: any, toolArgs: JsonObject):
         for (const event of JSON.parse(JSON.stringify(response.data)).data.events) {
             const midTime = (event.start_time + event.end_time) / 2;
             let image = await extractFrameAtTime(toolArgs.requestBody.video, midTime);
-            
-            if (image.length > 1000000) {
-                image = await resizeBase64Image(image);
-            }
+            image = await resizeBase64Image(image);
             
             content.push({ type: "text", text: event.description });
             content.push({ type: "image", data: image, mimeType: "image/jpeg" });
@@ -137,11 +140,8 @@ async function createDepthVisualization(response: any, toolArgs: JsonObject): Pr
             img.width, 
             img.height
         );
-        
-        if (image.length > 1000000) {
-            image = await resizeBase64Image(image);
-        }
-        
+            
+        image = await resizeBase64Image(image);
         return image;
     } catch (error) {
         console.error('Error creating depth visualization:', error);
@@ -152,11 +152,7 @@ async function createDepthVisualization(response: any, toolArgs: JsonObject): Pr
 async function createDefaultVisualization(response: any): Promise<string | null> {
     try {
         let image = JSON.parse(JSON.stringify(response.data)).data[0];
-        
-        if (image && image.length > 1000000) {
-            image = await resizeBase64Image(image);
-        }
-        
+        image = await resizeBase64Image(image);
         return image;
     } catch (error) {
         console.error('Error creating default visualization:', error);

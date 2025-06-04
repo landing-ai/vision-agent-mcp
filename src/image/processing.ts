@@ -1,7 +1,7 @@
 import fs from 'fs';
 import ffmpeg from 'fluent-ffmpeg';
 import sharp from 'sharp';
-import { VALIDATION, IMAGE_PROCESSING } from '../constants.js';
+import { BASE64, IMAGE_PROCESSING } from '../constants.js';
 
 export function isValidBase64(str: string): boolean {
     const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
@@ -9,7 +9,7 @@ export function isValidBase64(str: string): boolean {
         return false;
     }
     
-    if (str.length % 4 !== 0 || str.length < VALIDATION.MIN_STRING_LENGTH_THRESHOLD) {
+    if (str.length % 4 !== 0 || str.length < BASE64.MIN_STRING_LENGTH_THRESHOLD) {
         return false;
     }
     
@@ -42,10 +42,16 @@ export async function saveBase64Image(base64Data: string, filePath: string): Pro
     }
 }
 
-export async function resizeBase64Image(base64Image: string): Promise<string> {
-    const imageBuffer = Buffer.from(base64Image, 'base64');
+export async function resizeBase64Image(base64ImageString: string): Promise<string> {
+    if (base64ImageString.length <= BASE64.MAX_STRING_LENGTH_THRESHOLD) {
+        return base64ImageString
+    }
+    const imageBuffer = Buffer.from(base64ImageString, 'base64');
     const resizedBuffer = await sharp(imageBuffer)
-        .resize(IMAGE_PROCESSING.DEFAULT_RESIZE_WIDTH, IMAGE_PROCESSING.DEFAULT_RESIZE_HEIGHT)
+        .resize(512, 512, {
+            fit: 'inside',
+            withoutEnlargement: true
+        })
         .toBuffer();
     return resizedBuffer.toString('base64');
 }
