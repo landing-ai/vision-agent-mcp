@@ -4,7 +4,7 @@
 <!-- Replace all TODOs with real links once available -->
 
 [![npm](https://img.shields.io/npm/v/vision-tools-mcp?label=npm)](https://www.npmjs.com/package/vision-tools-mcp)
-[![build](https://img.shields.io/github/actions/workflow/status/landing-ai/vision-agent-mcp/ci.yml?branch=main)]
+![build](https://github.com/landing-ai/vision-agent-mcp/actions/workflows/ci.yml/badge.svg)
 
 > **Beta – v0.1**  
 > This project is **early access** and subject to breaking changes until v1.0.
