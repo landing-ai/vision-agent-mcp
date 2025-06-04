@@ -18,19 +18,19 @@
 Modern LLM “agents” call external tools through the **Model Context Protocol (MCP)**.
 **Vision Agent MCP** is a lightweight, side-car MCP server that runs locally on STDIN/STDOUT, translating each tool call from an MCP-compatible client (e.g., Claude Desktop, Cursor, Cline) into an authenticated HTTPS request to Landing AI’s Vision Agent REST APIs. The response—JSON plus any images or masks—is streamed back to the model, so you can issue natural-language computer-vision and document-analysis commands from your editor without writing custom REST code or loading an extra SDK.
 
+
 📸 **Demo**
 ![Demo of Vision Agent + Claude Code](assets/demo.gif) <!-- TODO: replace with real GIF or remove -->
 
----
 
 ## 🧰 Supported Use Cases (v0.1)
 
 | Capability                          | Description                                                                                                                                                          |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`agentic-document-analysis`**     | Parse PDFs / images to extract text, tables, charts, and diagrams—taking layout and visual cues into account. [Web Demo](https://va.landing.ai/demo/doc-extraction). |
+| **`agentic-document-analysis`**     | Parse PDFs / images to extract text, tables, charts, and diagrams—taking layout and visual cues into account. [Web Version](https://va.landing.ai/demo/doc-extraction). |
 | **`text-to-object-detection`**      | Detect free-form prompts like “all traffic lights” using OWLv2 / CountGD / Florence-2; outputs bounding boxes.                                                       |
 | **`text-to-instance-segmentation`** | Generate pixel-perfect masks via Florence-2 + Segment-Anything-v2 (SAM-2).                                                                                           |
-| **`activity-recognition`**          | Recognize multiple activities in video with start/end timestamps.                                                                                                    |
+| **`activity-recognition`**          | Recognize multiple activities in video with start/end timestamps (1-pass efficient recognition, even for multiple activities).                                                  |
 | **`depth-pro`**                     | Produce high-resolution monocular depth estimation for single images.                                                                                                |
 
 > Whenever Vision Agent releases new endpoints, just run **`npm run generate-tools`**—the script fetches the latest OpenAPI spec and regenerates the local tool map automatically. 🚀
@@ -52,7 +52,6 @@ Modern LLM “agents” call external tools through the **Model Context Protocol
 11. [📜 License](#-license)
 12. [📬 Support](#-support)
 
----
 
 ## 🚀 Quick Start
 
@@ -81,7 +80,6 @@ npm start            # (or: node build/index.js)
    ```
 4. If your client supports inline previews, you’ll see bounding-box overlays; otherwise, the PNG/mask is saved to `./output` and the chat shows its path.
 
----
 
 ## 📦 Installation Options
 
@@ -153,7 +151,6 @@ Easy peasy—no local clone needed. Will auto-build and run.
 | **MCP client**           | Any MCP-capable client | e.g., Claude Desktop, Cursor, Cline, or a custom script                 |
 | **Git & npm/yarn**       | Latest stable          | To clone and install dependencies                                       |
 
----
 
 ## ⚙️ Configuration
 
@@ -194,7 +191,6 @@ IMAGE_DISPLAY_ENABLED=true
 * Make sure `VISION_AGENT_API_KEY` is set.
 * If you want inline previews, ensure `IMAGE_DISPLAY_ENABLED=true` and that your client supports rendering local file paths.
 
----
 
 ## 💡 Example Prompts
 
@@ -210,7 +206,6 @@ Upload your file (image, PDF, or video), then send one of these:
 
 > Feel free to experiment: change the prompt text (“all red cars,” “license plates,” “handwritten notes”) and see the magic happen. 🪄
 
----
 
 ## 🏗 Architecture & Flow
 
@@ -241,7 +236,6 @@ Upload your file (image, PDF, or video), then send one of these:
 6. **Return to chat**
    The MCP client receives structured JSON + file paths (or inline previews) and renders results for you.
 
----
 
 ## 🧑‍💻 Developer Guide
 
@@ -259,7 +253,6 @@ Here’s how to dive into the code, add new endpoints, or troubleshoot issues.
 
 > **Pro Tip**: If you modify any files under `src/` or want to pick up new endpoints from Vision Agent, run `npm run build:all` to recompile + regenerate tool definitions.
 
----
 
 ### 📂 Project Layout
 
@@ -367,7 +360,6 @@ vision-agent-mcp/
      ```
    * Listens for `SIGINT`/`SIGTERM` to gracefully shut down.
 
----
 
 ### 🚧 Error Handling & Logs
 
@@ -414,7 +406,6 @@ vision-agent-mcp/
 
 > **Tip**: To debug a JSON Schema mismatch, insert `console.log(inputSchema)` in `src/validation/schema.ts` or check `build/toolDefinitionMap.js` to inspect the generated Zod definitions.
 
----
 
 ## 🛟 Troubleshooting
 
@@ -471,7 +462,6 @@ vision-agent-mcp/
 
 </details>
 
----
 
 ## 🤝 Contributing
 
@@ -560,8 +550,8 @@ See [`LICENSE`](LICENSE) for the full text. <!-- TODO: swap if using Apache-2.0 
 Need help or have questions? We’ve got you covered:
 
 * **GitHub Issues**: Open an issue with a detailed description.
-* **Email**: Contact the Landing AI Developer Relations team at [devrel@landing.ai](mailto:devrel@landing.ai).
-* **Discord**: Join the VisionAgent community and post under `#mcp-support`.
+* **Email**: Contact the LandingAI team at [support@landing.ai](mailto:support@landing.ai).
+* **Discord**: Join the VisionAgent community - [https://discord.com/invite/RVcW3j9RgR](https://discord.com/invite/RVcW3j9RgR).
 
 We value your feedback—let’s build something amazing together! 🚀
 
@@ -640,4 +630,4 @@ Use this as a template to automate Vision Agent MCP tasks in your own projects.
 
 ---
 
-> *Made with ❤️ by the Landing AI Team*
+> *Made with ❤️ by the LandingAI Team*
