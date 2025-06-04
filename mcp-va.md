@@ -11,7 +11,7 @@
 > This project is **early access** and subject to breaking changes until v1.0.
 
 
-## Why this project exists
+## Vision Agent MCP Server v0.1 - Overview
 
 Modern LLM “agents” call external tools through the **Model Context Protocol (MCP)**.
 **Vision Agent MCP** is a lightweight, side-car MCP server that runs locally on STDIN/STDOUT, translating each tool call from an MCP-compatible client (Claude Desktop, Cursor, Cline, etc.) into an authenticated HTTPS request to Landing AI’s Vision Agent REST APIs. The response—JSON plus any images or masks—is streamed back to the model, so you can issue natural-language computer-vision and document-analysis commands from your editor without writing custom REST code or loading an extra SDK.
