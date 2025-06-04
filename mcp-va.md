@@ -1,4 +1,4 @@
-# Vision Agent MCP Server 
+# Vision Agent MCP 
 
 <!-- Badges (fill in real links) -->
 
@@ -13,18 +13,19 @@
 
 ## Overview
 
-The **Vision Agent MCP Server** implements the [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) so that large-language-model “agents” can call Landing AI’s Vision Agent APIs from any MCP-compatible client (Claude Desktop, Cursor, Cline, …).
+The **Vision Agent MCP** implements the [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) so that large-language-model “agents” can call LandingAI’s Vision Agent APIs from any MCP-compatible client (Claude Desktop, Cursor, Cline, …). An MCP package for Vision Agent that brings powerful computer vision and document analysis tools to the Model Context Protocol.
+
 
 ![Demo of Vision Agent with Claude Code](assets/demo.gif)
 
-### Supported Vision Agent tools (v0.1)
+### Vision Agent MCP (v0.1) - Supported Capabilities 
 
-| Tool | What it does |
+| Use Case | Description |
 |------|--------------|
-| `agentic-document-analysis` | Extracts structured data, text, layout & metadata from PDFs and images. |
+| `agentic-document-analysis` | Extracts text, images, charts, diagrams from PDFs and images taking into consideration layout and other visual cues. |
 | `text-to-object-detection` | Detects objects described in free-text prompts (OWLv2 / CountGD / Florence 2). |
 | `text-to-instance-segmentation` | Produces pixel-accurate masks via Florence 2 + SAM 2. |
-| `activity-recognition` | Labels human activities in video with timestamps. |
+| `activity-recognition` | Labels activities in video with start and end timestamps (support detecting multiple acitivities at once). |
 | `depth-pro` | Generates high-resolution monocular depth maps. |
 
 *(Run `npm run generate-tools` to pull the latest tool list from the Vision Agent OpenAPI spec.)*
@@ -262,19 +263,14 @@ See [`LICENSE`](LICENSE) for details.
 
 ---
 
-*Made with ❤️ by the Landing AI Developer Experience team.*
-
-```
+*Made with ❤️ by the LandingAI Team.*
 
 ---
 
-### What’s still missing?
+### Placeholders to be filled?
 
 * **CI badge URL and workflow file name**  
 * **Actual npm package name** (if you decide to publish)  
 * **GIF/Screenshot** for the quick test (drop a file in `/docs` and reference it)  
 * **Final License type** (MIT, Apache-2.0, …)
 
-Let me know if you’d like deeper examples (e.g., code snippets that parse responses), an architecture diagram in SVG, or extra sections like a **Security Policy**. Happy to iterate!
-::contentReference[oaicite:0]{index=0}
-```
