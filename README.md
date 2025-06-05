@@ -1,3 +1,5 @@
+
+https://github.com/user-attachments/assets/2017fa01-0e7f-411c-a417-9f79562627b7
 # VisionAgent MCP Server
 
 [![npm](https://img.shields.io/npm/v/vision-tools-mcp?label=npm)](https://www.npmjs.com/package/vision-tools-mcp)
@@ -14,7 +16,8 @@ Modern LLM “agents” call external tools through the **[Model Context Protoco
 
 ## 📸 Demo
 
-<https://github.com/user-attachments/assets/0a44ee20-47f3-4ba0-9683-440ba1675577>
+
+<Uploading vision-agent-mcp.mov…>
 
 
 ## 🧰 Supported Use Cases (v0.1)
