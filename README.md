@@ -1,7 +1,4 @@
-# Vision Agent MCP Server
-
-<!-- ───────────────────────────── Badges ───────────────────────────── -->
-<!-- Replace all TODOs with real links once available -->
+# VisionAgent MCP Server
 
 [![npm](https://img.shields.io/npm/v/vision-tools-mcp?label=npm)](https://www.npmjs.com/package/vision-tools-mcp)
 ![build](https://github.com/landing-ai/vision-agent-mcp/actions/workflows/ci.yml/badge.svg)
@@ -10,10 +7,9 @@
 > This project is **early access** and subject to breaking changes until v1.0.
 
 
-## Vision Agent MCP Server v0.1 - Overview
+## VisionAgent MCP Server v0.1 - Overview
 
-Modern LLM “agents” call external tools through the **Model Context Protocol (MCP)**.
-**Vision Agent MCP** is a lightweight, side-car MCP server that runs locally on STDIN/STDOUT, translating each tool call from an MCP-compatible client (Claude Desktop, Cursor, Cline, etc.) into an authenticated HTTPS request to Landing AI’s Vision Agent REST APIs. The response JSON, plus any images or masks, is streamed back to the model so that you can issue natural-language computer-vision and document-analysis commands from your editor without writing custom REST code or loading an extra SDK.
+Modern LLM “agents” call external tools through the **[Model Context Protocol (MCP)](https://modelcontextprotocol.io/).** **VisionAgent MCP** is a lightweight, side-car MCP server that runs locally on STDIN/STDOUT, translating each tool call from an MCP-compatible client (Claude Desktop, Cursor, Cline, etc.) into an authenticated HTTPS request to Landing AI’s VisionAgent REST APIs. The response JSON, plus any images or masks, is streamed back to the model so that you can issue natural-language computer-vision and document-analysis commands from your editor without writing custom REST code or loading an extra SDK.
 
 
 ## 📸 Demo
@@ -31,7 +27,7 @@ Modern LLM “agents” call external tools through the **Model Context Protocol
 | **`activity-recognition`**     | Recognise multiple activities in video with start/end timestamps.                                           |
 | **`depth-pro`**                | High-resolution monocular depth estimation for single images.                                                    |
 
-> Run **`npm run generate-tools`** whenever Vision Agent releases new endpoints. The script fetches the latest OpenAPI spec and regenerates the local tool map automatically.
+> Run **`npm run generate-tools`** whenever VisionAgent releases new endpoints. The script fetches the latest OpenAPI spec and regenerates the local tool map automatically.
 
 
 ## 🗺 Table of Contents
@@ -54,13 +50,13 @@ If you do not have a VisionAgent API key, [create an account](https://va.landing
 # 1  Install
 npm install -g vision-tools-mcp
 
-# 2  Set your Vision Agent API key
+# 2  Set your VisionAgent API key
 export VISION_AGENT_API_KEY="<YOUR_API_KEY>"
 
 # 3  Configure your MCP client with the following settings:
 {
   "mcpServers": {
-    "Vision Agent": {
+    "VisionAgent": {
       "command": "npx",
       "args": ["vision-tools-mcp"],
       "env": {
@@ -89,7 +85,7 @@ If your client supports inline resources, you’ll see bounding-box overlays; ot
 | Software                 | Minimum Version                          |
 | ------------------------ | ---------------------------------------- |
 | **Node.js**              | 20 (LTS)                                 |
-| **Vision Agent account** | Any paid or free tier (needs API key)    |
+| **VisionAgent account** | Any paid or free tier (needs API key)    |
 | **MCP client**           | Claude Desktop / Cursor / Cline / *etc.* |
 
 
@@ -106,7 +102,7 @@ If your client supports inline resources, you’ll see bounding-box overlays; ot
 ```jsonc
 {
   "mcpServers": {
-    "Vision Agent": {
+    "VisionAgent": {
       "command": "npx",
       "args": ["vision-tools-mcp"],
       "env": {
@@ -137,21 +133,21 @@ For MCP clients without image display capabilities, like Cursor, set IMAGE_DISPL
 
 ```text
 ┌────────────────────┐ 1. human prompt            ┌───────────────────┐
-│ MCP-capable client │───────────────────────────▶│  Vision Agent MCP │
+│ MCP-capable client │───────────────────────────▶│  VisionAgent MCP │
 │  (Cursor, Claude)  │                            │   (this repo)     │
 └────────────────────┘                            └─────────▲─────────┘
             ▲  6. rendered PNG / JSON                     │ 2. JSON tool call
             │                                             │
             │ 5. preview path / data         3. HTTPS     │
             │                                             ▼
-       local disk  ◀──────────┐                Landing AI Vision Agent
+       local disk  ◀──────────┐                Landing AI VisionAgent
                                └──────────────  Cloud APIs
                                            4. JSON / media blob
 ```
 
 1. **Prompt → tool-call** The client converts your natural-language prompt into a structured MCP call.
 2. **Validation** The server validates args with Zod schemas derived from the live OpenAPI spec.
-3. **Forward** An authenticated Axios request hits the Vision Agent endpoint.
+3. **Forward** An authenticated Axios request hits the VisionAgent endpoint.
 4. **Response** JSON + any base64 media are returned.
 5. **Visualization** If enabled, masks / boxes / depth maps are rendered to files.
 6. **Return to chat** The MCP client receives data + file paths (or inline previews).
@@ -189,7 +185,7 @@ Here’s how to dive into the code, add new endpoints, or troubleshoot issues.
 
 ### Environment Variables
 
-- `VISION_AGENT_API_KEY` - **Required** API key for Vision Agent authentication
+- `VISION_AGENT_API_KEY` - **Required** API key for VisionAgent authentication
 - `OUTPUT_DIRECTORY` - Optional directory for saving processed outputs (supports relative and absolute paths)
 - `IMAGE_DISPLAY_ENABLED` - Set to `"true"` to enable image visualization features
 
@@ -200,7 +196,7 @@ After building, configure your MCP client with the following settings:
 ```json
 {
   "mcpServers": {
-    "Vision Agent": {
+    "VisionAgent": {
       "command": "node",
       "args": [
         "/path/to/build/index.js"
@@ -227,7 +223,7 @@ After building, configure your MCP client with the following settings:
 | `npm run generate-tools` | Fetch latest OpenAPI and regenerate `toolDefinitionMap.ts`. |
 | `npm run build:all`      | Convenience: `npm run build` + `npm run generate-tools`.    |
 
-> **Pro Tip**: If you modify any files under `src/` or want to pick up new endpoints from Vision Agent, run `npm run build:all` to recompile + regenerate tool definitions.
+> **Pro Tip**: If you modify any files under `src/` or want to pick up new endpoints from VisionAgent, run `npm run build:all` to recompile + regenerate tool definitions.
 
 
 ### 📂 Project Layout
@@ -279,7 +275,7 @@ vision-agent-mcp/
 
 1. **`src/generateTools.ts`**
 
-   * Fetches `https://api.va.landing.ai/openapi.json` (Vision Agent’s public OpenAPI).
+   * Fetches `https://api.va.landing.ai/openapi.json` (VisionAgent’s public OpenAPI).
    * Filters endpoints via a whitelist (or you can disable filtering to include all).
    * Converts JSON Schema → Zod schemas, writes `toolDefinitionMap.ts` with a `Map<string, McpToolDefinition>`.
    * Run: `npm run generate-tools`.
@@ -297,7 +293,7 @@ vision-agent-mcp/
      * Validates incoming `arguments` with Zod.
      * If file-based args (e.g., `imagePath`, `pdfPath`), reads & base64-encodes via `src/utils/file.ts`.
      * Builds a multipart/form-data or JSON payload for Axios.
-     * Calls Vision Agent endpoint, catches errors, returns MCP-compliant JSON response.
+     * Calls VisionAgent endpoint, catches errors, returns MCP-compliant JSON response.
      * If `IMAGE_DISPLAY_ENABLED=true`, calls `src/server/visualization.ts` to save PNGs/JSON.
 
 4. **`src/server/visualization.ts`**
@@ -315,7 +311,7 @@ vision-agent-mcp/
 
    * Configures Axios with base URL `https://api.va.landing.ai`.
    * Adds `Authorization: Bearer ${VISION_AGENT_API_KEY}` header.
-   * Wraps calls to Vision Agent endpoints, handles 4xx/5xx, formats errors into MCP error objects.
+   * Wraps calls to VisionAgent endpoints, handles 4xx/5xx, formats errors into MCP error objects.
 
 7. **`src/validation/schema.ts`**
 
@@ -359,7 +355,7 @@ vision-agent-mcp/
     "id": 4,
     "error": {
       "code": -32000,
-      "message": "Vision Agent API error: 502 Bad Gateway"
+      "message": "VisionAgent API error: 502 Bad Gateway"
     }
   }
   ```
