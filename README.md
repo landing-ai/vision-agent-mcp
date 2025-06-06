@@ -52,10 +52,7 @@ If you do not have a VisionAgent API key, [create an account](https://va.landing
 # 1  Install
 npm install -g vision-tools-mcp
 
-# 2  Set your VisionAgent API key
-export VISION_AGENT_API_KEY="<YOUR_API_KEY>"
-
-# 3  Configure your MCP client with the following settings:
+# 2  Configure your MCP client with the following settings:
 {
   "mcpServers": {
     "VisionAgent": {
@@ -71,9 +68,9 @@ export VISION_AGENT_API_KEY="<YOUR_API_KEY>"
 }
 ```
 
-4. Open your MCP-aware client.
-5. Download *street.png* (from the assets folder in this directory, or you can choose any test image).
-6. Paste the prompt below (or any prompt):
+3. Open your MCP-aware client.
+4. Download *street.png* (from the assets folder in this directory, or you can choose any test image).
+5. Paste the prompt below (or any prompt):
 
 ```
 Detect all traffic lights in /path/to/mcp/vision-agent-mcp/assets/street.png
