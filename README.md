@@ -1,5 +1,5 @@
 
-https://github.com/user-attachments/assets/2017fa01-0e7f-411c-a417-9f79562627b7
+
 # VisionAgent MCP Server
 
 [![npm](https://img.shields.io/npm/v/vision-tools-mcp?label=npm)](https://www.npmjs.com/package/vision-tools-mcp)
@@ -16,8 +16,7 @@ Modern LLM “agents” call external tools through the **[Model Context Protoco
 
 ## 📸 Demo
 
-
-<Uploading vision-agent-mcp.mov…>
+https://github.com/user-attachments/assets/2017fa01-0e7f-411c-a417-9f79562627b7
 
 
 ## 🧰 Supported Use Cases (v0.1)
@@ -72,12 +71,12 @@ export VISION_AGENT_API_KEY="<YOUR_API_KEY>"
 }
 ```
 
-1. Open your MCP-aware client.
-2. Download *street.png* (from the assets folder in this directory, or you can choose any test image).
-3. Paste the prompt below (or any prompt):
+4. Open your MCP-aware client.
+5. Download *street.png* (from the assets folder in this directory, or you can choose any test image).
+6. Paste the prompt below (or any prompt):
 
 ```
-Detect all traffic lights in /Users/cmaloney111/Documents/Landing/mcp/vision-agent-mcp/assets/street.png using text-to-object-detection
+Detect all traffic lights in /path/to/mcp/vision-agent-mcp/assets/street.png
 ```
 
 If your client supports inline resources, you’ll see bounding-box overlays; otherwise, the PNG is saved to your output directory, and the chat shows its path.
@@ -407,6 +406,9 @@ Upgrade via `nvm install 20` (mac/Linux) or download from nodejs.org if on Windo
 
 </details>
 
+For other issues, refer to the MCP documentation: https://modelcontextprotocol.io/quickstart/user
+
+Also not that specific clients will have their own helpful documentation. For example, if you are using the OpenAI Agents SDK, refer to their documentation here: https://openai.github.io/openai-agents-python/mcp/
 
 ## 🤝 Contributing
 
