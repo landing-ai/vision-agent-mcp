@@ -1,6 +1,6 @@
 {
   "name": "vision-tools-mcp",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "MCP Server for vision-tools-api",
   "type": "module",
   "main": "build/index.js",
