@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/landing-ai-vision-agent-mcp-badge.png)](https://mseep.ai/app/landing-ai-vision-agent-mcp)
+
 
 
 # VisionAgent MCP Server
